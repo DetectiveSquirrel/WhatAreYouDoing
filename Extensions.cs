@@ -29,11 +29,11 @@ namespace WhatAreYouDoing
         /// <param name="offsetY">The offset value to add to the Y component of each vector.</param>
         public static List<Vector2> AddOffset(this List<Vector2> vectorList, float offsetX, float offsetY)
         {
-            List<Vector2> modifiedList = new List<Vector2>(vectorList.Count);
+            var modifiedList = new List<Vector2>(vectorList.Count);
 
-            for (int i = 0; i < vectorList.Count; i++)
+            for (var i = 0; i < vectorList.Count; i++)
             {
-                Vector2 vector = vectorList[i];
+                var vector = vectorList[i];
                 vector.X += offsetX;
                 vector.Y += offsetY;
                 modifiedList.Add(vector);
@@ -49,11 +49,11 @@ namespace WhatAreYouDoing
         /// <param name="offset">The offset value to add to each vector.</param>
         public static List<Vector2> AddOffset(this List<Vector2> vectorList, float offset)
         {
-            List<Vector2> modifiedList = new List<Vector2>(vectorList.Count);
+            var modifiedList = new List<Vector2>(vectorList.Count);
 
-            for (int i = 0; i < vectorList.Count; i++)
+            for (var i = 0; i < vectorList.Count; i++)
             {
-                Vector2 vector = vectorList[i];
+                var vector = vectorList[i];
                 vector.X += offset;
                 vector.Y += offset;
                 modifiedList.Add(vector);

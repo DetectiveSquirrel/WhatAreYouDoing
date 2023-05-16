@@ -33,8 +33,7 @@ namespace WhatAreYouDoing
         private bool largeMap;
         private float scale;
         private float k;
-
-        TimedVector2ContainerList trapShotContainer;
+        private TimedVector2ContainerList trapShotContainer;
 
         private float Diagonal =>
             _diag?.Value ?? (_diag = new TimeCache<float>(() =>
@@ -131,7 +130,6 @@ namespace WhatAreYouDoing
             }
 
             scale = k / Camera.Height * Camera.Width * 3f / 4f / MapWindow.LargeMapZoom;
-
 
             trapShotContainer.RemoveInvalidObjects();
             return null;
@@ -276,7 +274,6 @@ namespace WhatAreYouDoing
 
                                 var currentAction = actorComp?.CurrentAction;
 
-
                                 if (currentAction != null)
                                 {
                                     // Add to containerList if not already present
@@ -303,8 +300,8 @@ namespace WhatAreYouDoing
                                         var entityValue = entity.GridPosNum.Distance(itemToDraw.Position);
 
                                         var colorScaler = new ColorScalerFromTime();
-                                        float duration = arrowDuration; // Duration in seconds
-                                        Color startColor = Color.Red;
+                                        var duration = arrowDuration; // Duration in seconds
+                                        var startColor = Color.Red;
                                         byte maxAlpha = 200; // Maximum alpha value
                                         var elapsedSeconds = DateTime.Now - itemToDraw.StartTime;
                                         color = colorScaler.GetColor((float)elapsedSeconds.TotalSeconds, duration, startColor, maxAlpha);
@@ -404,7 +401,7 @@ namespace WhatAreYouDoing
         public Color GetColor(float value, float maxValue, Color startColor, byte startAlpha)
         {
             // Calculate the interpolated alpha value based on time
-            byte interpolatedAlpha = GetInterpolatedAlpha(value, maxValue, startAlpha);
+            var interpolatedAlpha = GetInterpolatedAlpha(value, maxValue, startAlpha);
 
             return new Color(startColor.R, startColor.G, startColor.B, interpolatedAlpha);
         }
@@ -412,7 +409,7 @@ namespace WhatAreYouDoing
         private byte GetInterpolatedAlpha(float value, float maxValue, byte startAlpha)
         {
             // Calculate the interpolated alpha value based on time
-            float alphaValue = startAlpha - ((startAlpha / maxValue) * Math.Min(value, maxValue));
+            var alphaValue = startAlpha - (startAlpha / maxValue * Math.Min(value, maxValue));
             return (byte)Math.Max(0, Math.Min(startAlpha, alphaValue));
         }
     }
@@ -467,8 +464,8 @@ namespace WhatAreYouDoing
 
         public bool IsWithinThreshold()
         {
-            DateTime currentTime = DateTime.Now;
-            TimeSpan elapsedTime = currentTime - StartTime;
+            var currentTime = DateTime.Now;
+            var elapsedTime = currentTime - StartTime;
             return elapsedTime <= Duration;
         }
     }
@@ -484,7 +481,7 @@ namespace WhatAreYouDoing
 
         public void Add(long entityId, long positionAddress, Vector2 position, TimeSpan duration)
         {
-            TimedVector2Container container = new TimedVector2Container(entityId, positionAddress, position, duration);
+            var container = new TimedVector2Container(entityId, positionAddress, position, duration);
             containerList.Add(container);
         }
 

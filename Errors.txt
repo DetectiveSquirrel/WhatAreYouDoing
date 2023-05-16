@@ -1,2 +1,0 @@
-Build failed:
-[17/05/2023 1:43:19 am, D:\Tools\Path of Exile Tools\Main Overlay\PoeHelper\Plugins\Source\WhatAreYouDoing\WhatAreYouDoing.cs(242, 79)] CS1503: Argument 2: cannot convert from 'float' to 'int'
