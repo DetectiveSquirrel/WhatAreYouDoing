@@ -170,8 +170,10 @@ namespace WhatAreYouDoing
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthRoomba", TrapType.GroundMover},
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthFlyingRoomba", TrapType.GroundMover },
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawblade", TrapType.GroundMover },
-                            {"Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", TrapType.GroundMover },
-                            { "Metadata/Terrain/Labyrinth/Traps/LabyrinthArrowTrap_Single", TrapType.Darts }
+                            { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawbladeSlow", TrapType.GroundMover },
+                            { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", TrapType.GroundMover },
+                            { "Metadata/Terrain/Labyrinth/Traps/LabyrinthArrowTrap_Single", TrapType.Darts },
+                            { "Metadata/Terrain/Labyrinth/Traps/AlternateArrowTraps/LabyrinthArrowTrapTwo90DegreeArrows", TrapType.Darts }
                         };
 
                         var entityTypeCheck = pathToType.ContainsKey(entity.Path) ? pathToType[entity.Path] : TrapType.None;
@@ -181,12 +183,12 @@ namespace WhatAreYouDoing
                             case TrapType.None:
                                 break;
                             case TrapType.GroundMover:
-                                LogMessage(@$"entityTypeCheck = {entityTypeCheck}", 3);
+                                //LogMessage(@$"entityTypeCheck = {entityTypeCheck}", 3);
                                 drawSettings = Settings.MovingTraps;
                                 drawSettings.TrapType = entityTypeCheck;
                                 break;
                             case TrapType.Darts:
-                                LogMessage(@$"entityTypeCheck = {entityTypeCheck}", 3);
+                                //LogMessage(@$"entityTypeCheck = {entityTypeCheck}", 3);
                                 drawSettings = Settings.DartTraps;
                                 drawSettings.TrapType = entityTypeCheck;
                                 break;
@@ -198,7 +200,7 @@ namespace WhatAreYouDoing
 
                 var component = entity?.GetComponent<Render>();
                 if (component == null) continue;
-                LogMessage(@$"drawSettings.TrapType = {drawSettings.TrapType}", 3);
+                //LogMessage(@$"drawSettings.TrapType = {drawSettings.TrapType}", 3);
 
                 switch (drawSettings.TrapType)
                 {
@@ -220,7 +222,8 @@ namespace WhatAreYouDoing
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthRoomba", 120f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthFlyingRoomba", 90f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawblade", 50f },
-                                    {"Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", 60f }
+                                    { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawbladeSlow", 50f },
+                                    { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", 60f }
                                 };
                                 var circleSize = entityToSize.ContainsKey(entity.Path) ? entityToSize[entity.Path] : 30f;
 
@@ -268,6 +271,7 @@ namespace WhatAreYouDoing
                             {
                                 var entityToSize = new Dictionary<string, float>()
                                 {
+                                    { "Metadata/Terrain/Labyrinth/Traps/AlternateArrowTraps/LabyrinthArrowTrapTwo90DegreeArrows", 20f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthArrowTrap_Single", 20f }
                                 };
                                 var circleSize = entityToSize.ContainsKey(entity.Path) ? entityToSize[entity.Path] : 30f;
