@@ -205,6 +205,7 @@ namespace WhatAreYouDoing
                         {
                             { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneStationary", TrapType.Sirus },
                             { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZone", TrapType.Sirus },
+                            { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneApparition", TrapType.Sirus },
                         };
 
                         var entityTypeCheckMonster = pathToTypeMonster.ContainsKey(entity.Metadata) ? pathToTypeMonster[entity.Metadata] : TrapType.None;
@@ -238,6 +239,7 @@ namespace WhatAreYouDoing
                                 {
                                     { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneStationary", 790F },
                                     { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZone", 790F },
+                                    { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneApparition", 790F },
                                 };
 
                             var circleSize = entityToSize.ContainsKey(entity.Metadata) ? entityToSize[entity.Metadata] : 30f;
