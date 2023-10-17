@@ -6,7 +6,8 @@ namespace WhatAreYouDoing
     {
         None,
         GroundMover,
-        Darts
+        Darts,
+        Sirus
     }
 
     /// <summary>

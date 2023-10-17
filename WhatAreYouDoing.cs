@@ -8,6 +8,7 @@ using ImGuiNET;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Color = SharpDX.Color;
 using Map = ExileCore.PoEMemory.Elements.Map;
@@ -18,11 +19,11 @@ namespace WhatAreYouDoing
 {
     public class WhereAreYouGoing : BaseSettingsPlugin<WhatAreYouDoingSettings>
     {
-        private CachedValue<RectangleF> _mapRect;
+        private CachedValue<SharpDX.RectangleF> _mapRect;
         private CachedValue<float> _diag;
         private Camera Camera => GameController.Game.IngameState.Camera;
         private Map MapWindow => GameController.Game.IngameState.IngameUi.Map;
-        private RectangleF CurrentMapRect => _mapRect?.Value ?? (_mapRect = new TimeCache<RectangleF>(() => MapWindow.GetClientRect(), 100)).Value;
+        private SharpDX.RectangleF CurrentMapRect => _mapRect?.Value ?? (_mapRect = new TimeCache<SharpDX.RectangleF>(() => MapWindow.GetClientRect(), 100)).Value;
 
         private Vector2 ScreenCenter =>
             new Vector2(CurrentMapRect.Width / 2, (CurrentMapRect.Height / 2) - 20) + new Vector2(CurrentMapRect.X, CurrentMapRect.Y) +
@@ -151,7 +152,9 @@ namespace WhatAreYouDoing
             if (MapWindow == null) return;
             var mapWindowLargeMapZoom = MapWindow.LargeMapZoom;
 
-            var baseList = GameController?.EntityListWrapper.ValidEntitiesByType[EntityType.Terrain].ToList();
+            var baseList = (GameController?.EntityListWrapper.ValidEntitiesByType[EntityType.Terrain].ToList() ?? new List<Entity>())
+                                        .Concat(GameController?.EntityListWrapper.ValidEntitiesByType[EntityType.Monster].ToList() ?? new List<Entity>())
+                                        .ToList();
 
             if (baseList == null) return;
 
@@ -171,6 +174,7 @@ namespace WhatAreYouDoing
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthFlyingRoomba", TrapType.GroundMover },
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawblade", TrapType.GroundMover },
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawbladeSlow", TrapType.GroundMover },
+                            { "Metadata/Terrain/Labyrinth/Traps/LabyrinthRoomba_Slow", TrapType.GroundMover },
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", TrapType.GroundMover },
                             { "Metadata/Terrain/Labyrinth/Traps/LabyrinthArrowTrap_Single", TrapType.Darts },
                             { "Metadata/Terrain/Labyrinth/Traps/AlternateArrowTraps/LabyrinthArrowTrapTwo90DegreeArrows", TrapType.Darts }
@@ -194,6 +198,27 @@ namespace WhatAreYouDoing
                                 break;
                         }
                         break;
+
+                    case EntityType.Monster:
+                        // Find a better way to sort this without hard coded paths
+                        var pathToTypeMonster = new Dictionary<string, TrapType>()
+                        {
+                            { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneStationary", TrapType.Sirus },
+                            { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZone", TrapType.Sirus },
+                        };
+
+                        var entityTypeCheckMonster = pathToTypeMonster.ContainsKey(entity.Metadata) ? pathToTypeMonster[entity.Metadata] : TrapType.None;
+
+                        switch (entityTypeCheckMonster)
+                        {
+                            case TrapType.None:
+                                break;
+                            case TrapType.Sirus:
+                                drawSettings = Settings.MovingTraps;
+                                drawSettings.TrapType = entityTypeCheckMonster;
+                                break;
+                        }
+                        break;
                 }
 
                 if (!drawSettings.Enable) continue;
@@ -206,6 +231,36 @@ namespace WhatAreYouDoing
                 {
                     case TrapType.None:
                         // No u.
+                        break;
+                    case TrapType.Sirus:
+                        {
+                            var entityToSize = new Dictionary<string, float>()
+                                {
+                                    { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneStationary", 790F },
+                                    { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZone", 790F },
+                                };
+
+                            var circleSize = entityToSize.ContainsKey(entity.Metadata) ? entityToSize[entity.Metadata] : 30f;
+
+                            entity.TryGetComponent<Stats>(out var statsComp);
+                            if (statsComp != null)
+                            {
+                                foreach ( var stats in statsComp.StatDictionary)
+                                {
+                                    if (stats.Key == GameStat.ActorScalePct)
+                                    {
+                                        circleSize = circleSize * (1 + stats.Value/100F);
+                                    }
+                                }
+                            }
+                            var color = drawSettings.Colors.WorldColor;
+                            DrawCircleInWorldPosition(entity.PosNum, circleSize, drawSettings.World.RenderCircleThickness, drawSettings.Colors.MapAttackColor);
+
+                            if (drawSettings.Map.Enable && drawSettings.Map.DrawAttack)
+                            {
+                                DrawCircleInMapPosition(entity.GridPosNum, circleSize/10, drawSettings.Map.LineThickness, drawSettings.Colors.MapAttackColor);
+                            }
+                        }
                         break;
                     case TrapType.GroundMover:
                         {
@@ -220,10 +275,12 @@ namespace WhatAreYouDoing
                                 var entityToSize = new Dictionary<string, float>()
                                 {
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthRoomba", 120f },
+                                    { "Metadata/Terrain/Labyrinth/Traps/LabyrinthRoomba_Slow", 120f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthFlyingRoomba", 90f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawblade", 50f },
                                     { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSawbladeSlow", 50f },
-                                    { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", 60f }
+                                    { "Metadata/Terrain/Labyrinth/Traps/LabyrinthSpinner", 60f },
+                                    { "Metadata/Monsters/InvisibleFire/InvisibleFireOrionDeathZoneStationary", 200f }
                                 };
                                 var circleSize = entityToSize.ContainsKey(entity.Path) ? entityToSize[entity.Path] : 30f;
 
@@ -386,6 +443,36 @@ namespace WhatAreYouDoing
                 Graphics.DrawLine(
                     Camera.WorldToScreen(currentWorldPos),
                     Camera.WorldToScreen(nextWorldPos),
+                    thickness,
+                    color
+                );
+            }
+        }
+
+        /// <summary>
+        /// Draws a circle at the specified world position with the given radius, thickness, and color.
+        /// </summary>
+        /// <param name="position">The world position to draw the circle at.</param>
+        /// <param name="radius">The radius of the circle.</param>
+        /// <param name="thickness">The thickness of the circle's outline.</param>
+        /// <param name="color">The color of the circle.</param>
+        private void DrawCircleInMapPosition(Vector2 position, float radius, int thickness, Color color)
+        {
+            const int segments = 15;
+            const float segmentAngle = 2f * MathF.PI / segments;
+
+            for (var i = 0; i < segments; i++)
+            {
+                var angle = i * segmentAngle;
+                var currentOffset = new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * radius;
+                var nextOffset = new Vector2(MathF.Cos(angle + segmentAngle), MathF.Sin(angle + segmentAngle)) * radius;
+
+                var currentWorldPos = position + currentOffset;
+                var nextWorldPos = position + nextOffset;
+
+                Graphics.DrawLine(
+                    GameController.IngameState.Data.GetGridMapScreenPosition(currentWorldPos),
+                    GameController.IngameState.Data.GetGridMapScreenPosition(nextWorldPos),
                     thickness,
                     color
                 );

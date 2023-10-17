@@ -1,0 +1,3 @@
+Build failed:
+[18/10/2023 9:28:52 am, D:\Tools\Path of Exile Tools\Main Overlay\PoeHelper\Plugins\Source\WhatAreYouDoing-main\WhatAreYouDoing.cs(26, 17)] CS0104: 'RectangleF' is an ambiguous reference between 'System.Drawing.RectangleF' and 'SharpDX.RectangleF'
+[18/10/2023 9:28:52 am, D:\Tools\Path of Exile Tools\Main Overlay\PoeHelper\Plugins\Source\WhatAreYouDoing-main\WhatAreYouDoing.cs(22, 29)] CS0104: 'RectangleF' is an ambiguous reference between 'System.Drawing.RectangleF' and 'SharpDX.RectangleF'
